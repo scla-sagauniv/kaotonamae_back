@@ -1,12 +1,40 @@
 version: '3'
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  golang:
+    container_name: kaotonamae_back
+    build: ./golang
+    tty: true
     volumes:
-      - .:/app
+      - ./golang:/app
     working_dir: /app
     command: go run main.go
     ports:
       - "8080:8080"
+    env_file:
+      - ./mysql/.env
+    depends_on:
+      - gorm-mysql
+    networks:
+      - kaotonamae_back_network
+
+  gorm-mysql:
+    container_name: kaotonamae_db
+    build: ./mysql
+    tty: true
+    platform: linux/x86_64
+    ports:
+      - 3312:3312
+    env_file:
+      - ./mysql/.env
+    volumes:
+      - mysql_test_volume:/var/lib/mysql
+    networks:
+      - kaotonamae_back_network
+
+volumes:
+  mysql_test_volume:
+    name: mysql_test_volume
+
+networks:
+  kaotonamae_back_network:
+    driver: bridge
