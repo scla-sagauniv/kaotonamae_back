@@ -12,6 +12,8 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    depends_on:
+      - kaotonamae_db
     networks:
       - kaotonamae_net
 
@@ -27,9 +29,13 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     command: ["--default-time-zone=+00:00"]
     volumes:
-      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - type: volume
+        source: mysql_data
+        target: /var/lib/mysql
     networks:
       - kaotonamae_net
 
 networks:
   kaotonamae_net:
+volumes:
+  mysql_data:
