@@ -1,7 +1,7 @@
 version: '3'
 services:
-  golang:
-    container_name: kaotonamae_back
+  kaotonamae_back:
+    restart: always
     build: ./golang
     tty: true
     volumes:
@@ -12,29 +12,14 @@ services:
       - "8080:8080"
     env_file:
       - ./mysql/.env
-    depends_on:
-      - gorm-mysql
-    networks:
-      - kaotonamae_back_network
 
-  gorm-mysql:
-    container_name: kaotonamae_db
-    build: ./mysql
-    tty: true
-    platform: linux/x86_64
+  kaotonamae_db:
+    image: mysql:8.0
+    restart: always
     ports:
-      - 3312:3312
-    env_file:
-      - ./mysql/.env
-    volumes:
-      - mysql_test_volume:/var/lib/mysql
-    networks:
-      - kaotonamae_back_network
-
-volumes:
-  mysql_test_volume:
-    name: mysql_test_volume
-
-networks:
-  kaotonamae_back_network:
-    driver: bridge
+      - 3312:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: test_database
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
