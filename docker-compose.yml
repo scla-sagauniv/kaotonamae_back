@@ -1,6 +1,7 @@
 version: '3'
 services:
-  kaotonamae_back:
+  go:
+    container_name: kaotonamae_back
     restart: always
     build: ./golang
     tty: true
@@ -13,11 +14,12 @@ services:
     env_file:
       - .env
     depends_on:
-      - kaotonamae_db
+      - db
     networks:
       - kaotonamae_net
 
-  kaotonamae_db:
+  db:
+    container_name: kaotonamae_db
     image: mysql:8.0
     restart: always
     ports:
