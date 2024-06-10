@@ -8,7 +8,7 @@ import (
 )
 
 type UserInfo struct {
-	UserId    string    `json:"userId" gorm:"column:user_id;type:VARCHAR(255);index"`
+	UserId    string    `json:"userId" gorm:"column:user_id;primaryKey;type:VARCHAR(255);index"`
 	UserName  string    `json:"userName" gorm:"column:user_name;type:VARCHAR(255)"`
 	Furigana  string    `json:"furigana" gorm:"column:furigana;type:VARCHAR(255)"`
 	Nickname  string    `json:"nickname" gorm:"column:nickname;type:VARCHAR(255)"`
