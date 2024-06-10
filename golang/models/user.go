@@ -9,6 +9,7 @@ type User struct {
 	UserInfos []UserInfo `gorm:"foreignKey:UserId"`
 	Auths     []Auth     `gorm:"foreignKey:UserId"`
 	Friends   []Friend   `gorm:"foreignKey:UserId"`
+	Groups    []Group    `gorm:"foreignKey:UserId"`
 	UpdatedAt time.Time  `json:"updatedAt" gorm:"column:updated_at"`
 	CreatedAt time.Time  `json:"createdAt" gorm:"column:created_at"`
 }
