@@ -8,7 +8,7 @@ import (
 )
 
 func getAllUsers(context echo.Context) error {
-	users, err := models.GetAllUsers()
+	users, err := models.GetAllUserInfos()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, "ユーザーを取得できませんでした。")
 	}
@@ -17,7 +17,7 @@ func getAllUsers(context echo.Context) error {
 
 func getUserById(context echo.Context) error {
 	userId := context.Param("userId")
-	user, err := models.GetUserById(userId)
+	user, err := models.GetUserInfoById(userId)
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, "ユーザーを取得できませんでした。")
 	}
