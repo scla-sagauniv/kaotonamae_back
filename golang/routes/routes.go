@@ -6,5 +6,5 @@ import (
 
 func RegisterRoutes(server *echo.Echo) {
 	server.GET("/user", getAllUsers)
-	server.GET("/user/:userId", getUserById)
+	server.POST("/createUser/:userId", postUserById)
 }
