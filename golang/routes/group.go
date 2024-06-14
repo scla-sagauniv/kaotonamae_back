@@ -18,11 +18,11 @@ func getAllGroups(context echo.Context) error {
 
 func getGroupsByUserId(context echo.Context) error {
 	userId := context.Param("userId")
-	group, err := models.GetGroupByUserId(userId)
+	groupListElements, err := models.GetGroupByUserId(userId)
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, "グループを取得できませんでした。")
 	}
-	return context.JSON(http.StatusOK, group)
+	return context.JSON(http.StatusOK, groupListElements)
 }
 
 func GetNewGroup(context echo.Context) error {

@@ -20,6 +20,11 @@ type Group struct {
 	CreatedAt time.Time `json:"createdAt" gorm:"column:created_at"`
 }
 
+type GroupListElement struct {
+	GroupId   string `json:"groupId" gorm:"column:group_id;primaryKey;type:VARCHAR(255)"`
+	GroupName string `json:"groupName" gorm:"column:group_name;type:VARCHAR(255)"`
+}
+
 // 全グループ取得処理
 func GetAllGroups() ([]Group, error) {
 	groups := []Group{}
@@ -30,12 +35,25 @@ func GetAllGroups() ([]Group, error) {
 }
 
 // 特定のグループ取得処理
-func GetGroupByUserId(id string) ([]Group, error) {
+func GetGroupByUserId(id string) ([]GroupListElement, error) {
 	var groups []Group
-	if err := db.DB.Where("user_id = ?", id).Find(&groups).Error; err == nil {
-		return nil, nil
+	var groupListElements []GroupListElement
+
+	// userIdがidであるグループデータを取得
+	if err := db.DB.Where("user_id = ?", id).Find(&groups).Error; err != nil {
+		return nil, err
 	}
-	return groups, nil
+
+	// GroupListElementに整形して返す
+	for _, group := range groups {
+		groupListElement := GroupListElement{
+			GroupId:   group.GroupId,
+			GroupName: group.GroupName,
+		}
+		groupListElements = append(groupListElements, groupListElement)
+	}
+
+	return groupListElements, nil
 }
 
 // 新規グループ追加処理
