@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"kaotonamae_back/db"
+	"strconv"
 
 	"github.com/google/uuid"
 
@@ -63,11 +64,16 @@ func GetNewGroup(id string) (*Group, error) {
 		return nil, err
 	}
 
+	nextGroupName, err := findNextAvailableGroupName(id)
+	if err != nil {
+		return nil, err
+	}
+
 	// Create new group
 	newGroup := Group{
 		UserId:    id,
 		GroupId:   uuid.String(),
-		GroupName: "",
+		GroupName: nextGroupName,
 		Overview:  "",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -78,4 +84,33 @@ func GetNewGroup(id string) (*Group, error) {
 	}
 
 	return &newGroup, nil
+}
+
+func findNextAvailableGroupName(userId string) (string, error) {
+	var existingNames []string
+
+	// Query existing group names for the given userId
+	err := db.DB.Model(&Group{}).
+		Where("user_id = ?", userId).
+		Pluck("group_name", &existingNames).Error
+	if err != nil {
+		return "", err
+	}
+
+	// Find the next available number
+	nextNumber := 1
+	for {
+		nextGroupName := "New Group #" + strconv.Itoa(nextNumber)
+		found := false
+		for _, name := range existingNames {
+			if name == nextGroupName {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return nextGroupName, nil
+		}
+		nextNumber++
+	}
 }
