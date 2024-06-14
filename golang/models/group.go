@@ -17,7 +17,7 @@ type Group struct {
 	GroupId      string        `json:"groupId" gorm:"column:group_id;primaryKey;type:VARCHAR(255)"`
 	GroupName    string        `json:"groupName" gorm:"column:group_name;type:VARCHAR(255)"`
 	Overview     string        `json:"overview" gorm:"column:overview;type:VARCHAR(255)"`
-	GroupMembers []GroupMember `gorm:"foreignKey:groupId"`
+	GroupMembers []GroupMember `gorm:"foreignKey:GroupId;references:GroupId"`
 	UpdatedAt    time.Time     `json:"updatedAt" gorm:"column:updated_at"`
 	CreatedAt    time.Time     `json:"createdAt" gorm:"column:created_at"`
 }
