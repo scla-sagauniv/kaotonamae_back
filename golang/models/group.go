@@ -1,7 +1,10 @@
 package models
 
 import (
+	"errors"
 	"kaotonamae_back/db"
+
+	"github.com/google/uuid"
 
 	"time"
 
@@ -11,8 +14,8 @@ import (
 type Group struct {
 	UserId    string    `json:"userId" gorm:"column:user_id;primaryKey;type:VARCHAR(255)"`
 	GroupId   string    `json:"groupId" gorm:"column:group_id;primaryKey;type:VARCHAR(255)"`
-	GroupName string    `json:"groupName" gorm:"column:group_name;type:VARCHAR(255);index"`
-	Overview  string    `json:"overview" gorm:"column:overview;type:VARCHAR(255);index"`
+	GroupName string    `json:"groupName" gorm:"column:group_name;type:VARCHAR(255)"`
+	Overview  string    `json:"overview" gorm:"column:overview;type:VARCHAR(255)"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"column:updated_at"`
 	CreatedAt time.Time `json:"createdAt" gorm:"column:created_at"`
 }
@@ -33,4 +36,28 @@ func GetGroupByUserId(id string) ([]Group, error) {
 		return nil, nil
 	}
 	return groups, nil
+}
+
+// 新規グループ追加処理
+func GetNewGroup(id string) (*Group, error) {
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		return nil, err
+	}
+
+	// Create new group
+	newGroup := Group{
+		UserId:    id,
+		GroupId:   uuid.String(),
+		GroupName: "",
+		Overview:  "",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	if err := db.DB.Create(&newGroup).Error; err != nil {
+		return nil, errors.New("グループ作成中にエラーが発生しました")
+	}
+
+	return &newGroup, nil
 }

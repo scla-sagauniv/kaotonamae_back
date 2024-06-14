@@ -24,3 +24,12 @@ func getGroupsByUserId(context echo.Context) error {
 	}
 	return context.JSON(http.StatusOK, group)
 }
+
+func GetNewGroup(context echo.Context) error {
+	userId := context.Param("userId")
+	group, err := models.GetNewGroup(userId)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, "グループを追加できませんでした。")
+	}
+	return context.JSON(http.StatusOK, group)
+}

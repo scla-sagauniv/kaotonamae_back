@@ -10,4 +10,5 @@ func RegisterRoutes(server *echo.Echo) {
 
 	server.GET("/groups", getAllGroups)
 	server.GET("/groups/:userId", getGroupsByUserId)
+	server.GET("/newGroup/:userId", GetNewGroup)
 }
