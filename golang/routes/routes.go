@@ -15,4 +15,5 @@ func RegisterRoutes(server *echo.Echo) {
 	server.GET("/groupMembers", getAllGroupMembers)
 	server.GET("/groupMembers/:groupId", getMembersByGroupId)
 	server.POST("/groupMemberAdd/:groupId/:userId", postGroupMemberAdd)
+	server.DELETE("/groupMemberDelete/:groupId/:userId", deleteGroupMemberDelete)
 }

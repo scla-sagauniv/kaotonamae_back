@@ -28,9 +28,19 @@ func getMembersByGroupId(context echo.Context) error {
 func postGroupMemberAdd(context echo.Context) error {
 	userId := context.Param("userId")
 	groupId := context.Param("groupId")
-	groupListElements, err := models.PostGroupMemberAdd(userId, groupId)
+	groupMember, err := models.PostGroupMemberAdd(userId, groupId)
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, "グループメンバーを取得できませんでした。")
 	}
-	return context.JSON(http.StatusOK, groupListElements)
+	return context.JSON(http.StatusOK, groupMember)
+}
+
+func deleteGroupMemberDelete(context echo.Context) error {
+	userId := context.Param("userId")
+	groupId := context.Param("groupId")
+	err := models.DeleteGroupMemberDelete(userId, groupId)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, "グループメンバーを取得できませんでした。")
+	}
+	return context.JSON(http.StatusOK, "status: 完了")
 }

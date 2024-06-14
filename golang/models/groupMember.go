@@ -51,3 +51,19 @@ func PostGroupMemberAdd(userId, groupId string) (*GroupMember, error) {
 
 	return &newGroupMember, nil
 }
+
+// 特定のグループからグループメンバーを削除する
+func DeleteGroupMemberDelete(userId, groupId string) error {
+	// 削除対象のGroupMemberを取得
+	var groupMember GroupMember
+	if err := db.DB.Where("user_id = ? AND group_id = ?", userId, groupId).First(&groupMember).Error; err != nil {
+		return errors.New("グループメンバーが見つかりません")
+	}
+
+	// 削除
+	if err := db.DB.Delete(&groupMember).Error; err != nil {
+		return errors.New("グループメンバーの削除中にエラーが発生しました")
+	}
+
+	return nil
+}
