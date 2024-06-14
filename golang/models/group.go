@@ -59,7 +59,7 @@ func GetGroupByUserId(id string) ([]GroupListElement, error) {
 }
 
 // 新規グループ追加処理
-func GetNewGroup(id string) (*Group, error) {
+func PostNewGroup(id string) (*Group, error) {
 	uuid, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err

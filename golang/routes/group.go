@@ -25,9 +25,9 @@ func getGroupsByUserId(context echo.Context) error {
 	return context.JSON(http.StatusOK, groupListElements)
 }
 
-func GetNewGroup(context echo.Context) error {
+func postNewGroup(context echo.Context) error {
 	userId := context.Param("userId")
-	group, err := models.GetNewGroup(userId)
+	group, err := models.PostNewGroup(userId)
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, "グループを追加できませんでした。")
 	}
