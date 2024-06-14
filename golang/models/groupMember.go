@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"kaotonamae_back/db"
 	"time"
 
@@ -33,4 +34,20 @@ func GetGroupMembersByGroupId(id string) ([]GroupMember, error) {
 	}
 
 	return groupMembers, nil
+}
+
+// 特定のグループにグループメンバーを追加する
+func PostGroupMemberAdd(userId, groupId string) (*GroupMember, error) {
+	newGroupMember := GroupMember{
+		GroupId:   groupId,
+		UserId:    userId,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	if err := db.DB.Create(&newGroupMember).Error; err != nil {
+		return nil, errors.New("グループメンバーの追加中にエラーが発生しました")
+	}
+
+	return &newGroupMember, nil
 }
