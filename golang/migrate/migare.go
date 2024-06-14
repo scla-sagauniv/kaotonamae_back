@@ -11,4 +11,5 @@ func Run() {
 	db.DB.AutoMigrate(&models.UserInfo{})
 	db.DB.AutoMigrate(&models.Friend{})
 	db.DB.AutoMigrate(&models.Group{})
+	db.DB.AutoMigrate(&models.GroupMember{})
 }
