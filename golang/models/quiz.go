@@ -7,10 +7,11 @@ import (
 )
 
 type quiz struct {
-	QuizQuestion string            `json:"quizQuestion"`
-	QuizAnswer   string            `json:"quizAnswer"`
-	QuizHint     map[string]string `json:"quizHint"`
-	UserPhoto    string            `json:"userPhoto"`
+	QuizQuestionTop    string            `json:"quizQuestionTop"`
+	QuizQuestionBottom string            `json:"quizQuestionBottom"`
+	QuizAnswer         string            `json:"quizAnswer"`
+	QuizHint           map[string]string `json:"quizHint"`
+	UserPhoto          string            `json:"userPhoto"`
 }
 
 func CreateQuizzesRess(GroupId string) ([]quiz, error) {
@@ -54,8 +55,8 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 
 		// クイズ候補となるフィールドを集める
 		userInfoFields := map[string]string{
-			"UserName":        userInfo.UserLastName + " " + userInfo.UserFirstName,
-			"Furigana":        userInfo.LastNameFurigana + " " + userInfo.FirstNameFurigana,
+			"UserName": userInfo.UserLastName + " " + userInfo.UserFirstName,
+			// "Furigana":        userInfo.LastNameFurigana + " " + userInfo.FirstNameFurigana,
 			"Nickname":        userInfo.Nickname,
 			"Gender":          userInfo.Gender,
 			"Birthday":        userInfo.Birthday,
@@ -101,10 +102,11 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 
 		// クイズを作成してリストに追加
 		newQuiz := quiz{
-			QuizQuestion: quizQuestion,
-			QuizAnswer:   quizAnswer,
-			QuizHint:     quizHint,
-			UserPhoto:    userInfo.Photo,
+			QuizQuestionTop:    "写真の人の",
+			QuizQuestionBottom: "お名前は何でしょう",
+			QuizAnswer:         quizAnswer,
+			QuizHint:           quizHint,
+			UserPhoto:          userInfo.Photo,
 		}
 		quizzes = append(quizzes, newQuiz)
 		createdQuizzes[quizQuestion+quizAnswer] = true
@@ -125,7 +127,33 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 			}
 
 			quizField := remainingFields[rand.Intn(len(remainingFields))]
-			quizQuestion = quizField
+			var QuizQuestionBottomState string
+			switch quizField {
+			case "Nickname":
+				QuizQuestionBottomState = "あだ名は何でしょう"
+			case "Gender":
+				QuizQuestionBottomState = "性別は何でしょう"
+			case "Birthday":
+				QuizQuestionBottomState = "お誕生日はいつでしょう"
+			case "Age":
+				QuizQuestionBottomState = "年齢はおいくつでしょう"
+			case "Hobbys":
+				QuizQuestionBottomState = "趣味は何でしょう"
+			case "Organization":
+				QuizQuestionBottomState = "所属は何でしょう"
+			case "FavoriteColor":
+				QuizQuestionBottomState = "好きな色は何色でしょう"
+			case "FavoriteAnimal":
+				QuizQuestionBottomState = "好きな動物は何でしょう"
+			case "HolidayActivity":
+				QuizQuestionBottomState = "休日の過ごし方は何でしょう"
+			case "Weaknesses":
+				QuizQuestionBottomState = "弱点は何でしょう"
+			case "Language":
+				QuizQuestionBottomState = "使う言語は何でしょう"
+			default:
+				QuizQuestionBottomState = "Default state"
+			}
 			quizAnswer = userInfoFields[quizField]
 
 			// 既に生成されたクイズかどうかを確認
@@ -143,16 +171,17 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 
 			// クイズを作成してリストに追加
 			newQuiz = quiz{
-				QuizQuestion: quizQuestion,
-				QuizAnswer:   quizAnswer,
-				QuizHint:     quizHint,
-				UserPhoto:    userInfo.Photo,
+				QuizQuestionTop:    userInfoFields["UserName"] + " さんの",
+				QuizQuestionBottom: QuizQuestionBottomState,
+				QuizAnswer:         quizAnswer,
+				QuizHint:           quizHint,
+				UserPhoto:          userInfo.Photo,
 			}
 			quizzes = append(quizzes, newQuiz)
 			createdQuizzes[quizQuestion+quizAnswer] = true
 
 			// 3/10の確率でループを抜ける
-			if rand.Float32() < 0.3 {
+			if rand.Float32() < 0.25 {
 				break
 			}
 		}
