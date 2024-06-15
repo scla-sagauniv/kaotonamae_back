@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -55,8 +56,7 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 
 		// クイズ候補となるフィールドを集める
 		userInfoFields := map[string]string{
-			"UserName": userInfo.UserLastName + " " + userInfo.UserFirstName,
-			// "Furigana":        userInfo.LastNameFurigana + " " + userInfo.FirstNameFurigana,
+			"UserName":        userInfo.UserLastName + " " + userInfo.UserFirstName,
 			"Nickname":        userInfo.Nickname,
 			"Gender":          userInfo.Gender,
 			"Birthday":        userInfo.Birthday,
@@ -94,9 +94,12 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 
 		// ヒントを集める
 		quizHint := make(map[string]string)
+		hintCounter := 1
 		for _, field := range validFields {
-			if field != quizQuestion && len(quizHint) < 3 {
-				quizHint[field] = userInfoFields[field]
+			if field != quizQuestion && hintCounter <= 3 {
+				state := makeState(field)
+				quizHint["Hint"+strconv.Itoa(hintCounter)] = state + userInfoFields[field] + "です。"
+				hintCounter++
 			}
 		}
 
@@ -145,6 +148,8 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 				QuizQuestionBottomState = "好きな色は何色でしょう"
 			case "FavoriteAnimal":
 				QuizQuestionBottomState = "好きな動物は何でしょう"
+			case "FavoritePlace":
+				QuizQuestionBottomState = "好きな場所は何処でしょう"
 			case "HolidayActivity":
 				QuizQuestionBottomState = "休日の過ごし方は何でしょう"
 			case "Weaknesses":
@@ -163,9 +168,12 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 
 			// ヒントを集める
 			quizHint = make(map[string]string)
+			hintCounter = 1
 			for _, field := range validFields {
-				if field != quizQuestion && len(quizHint) < 3 {
-					quizHint[field] = userInfoFields[field]
+				if field != quizQuestion && hintCounter <= 3 {
+					state := makeState(field)
+					quizHint["Hint"+strconv.Itoa(hintCounter)] = state + userInfoFields[field] + "です。"
+					hintCounter++
 				}
 			}
 
@@ -188,4 +196,37 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 	}
 
 	return quizzes, nil
+}
+
+func makeState(field string) string {
+	var state string
+	switch field {
+	case "Nickname":
+		state = "あだ名は "
+	case "Gender":
+		state = "性別は "
+	case "Birthday":
+		state = "お誕生日は "
+	case "Age":
+		state = "年齢は "
+	case "Hobbys":
+		state = "趣味は "
+	case "Organization":
+		state = "所属は "
+	case "FavoriteColor":
+		state = "好きな色は "
+	case "FavoriteAnimal":
+		state = "好きな動物は "
+	case "FavoritePlace":
+		state = "好きな場所は "
+	case "HolidayActivity":
+		state = "休日の過ごし方は "
+	case "Weaknesses":
+		state = "弱点は "
+	case "Language":
+		state = "使う言語は "
+	default:
+		state = "Default state"
+	}
+	return state
 }
