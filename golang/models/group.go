@@ -87,6 +87,33 @@ func PostNewGroup(id string) (*Group, error) {
 	return &newGroup, nil
 }
 
+// グループ情報の更新
+func PutGroupByGroupId(lateGroup *Group) (*Group, error) {
+	// 現在のタイムスタンプを更新日時に設定
+	lateGroup.UpdatedAt = time.Now()
+
+	// データベースで該当のレコードを検索
+	var existingGroup Group
+	if err := db.DB.Where("group_id = ?", lateGroup.GroupId).First(&existingGroup).Error; err != nil {
+		if err == echo.ErrNotFound {
+			return nil, errors.New("グループが見つかりません")
+		}
+		return nil, err
+	}
+
+	// 更新対象のフィールドを上書き
+	existingGroup.GroupName = lateGroup.GroupName
+	existingGroup.Overview = lateGroup.Overview
+	existingGroup.UpdatedAt = lateGroup.UpdatedAt
+
+	// データベースのレコードを更新
+	if err := db.DB.Save(&existingGroup).Error; err != nil {
+		return nil, errors.New("グループ更新中にエラーが発生しました")
+	}
+
+	return &existingGroup, nil
+}
+
 // 新規追加の際にグループネームが重複しないようにする
 func findNextAvailableGroupName(userId string) (string, error) {
 	var existingNames []string

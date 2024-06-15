@@ -33,3 +33,19 @@ func postNewGroup(context echo.Context) error {
 	}
 	return context.JSON(http.StatusOK, group)
 }
+
+func putGroupByGroupId(context echo.Context) error {
+	var lateGroup models.Group
+	if err := context.Bind(&lateGroup); err != nil {
+		return context.JSON(http.StatusBadRequest, "リクエストボディのバインドに失敗しました。")
+	}
+	// デバッグ用のログ出力
+	if lateGroup.GroupId == "" {
+		return context.JSON(http.StatusBadRequest, "group_id が指定されていません。")
+	}
+	group, err := models.PutGroupByGroupId(&lateGroup)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, "グループを更新できませんでした。")
+	}
+	return context.JSON(http.StatusOK, group)
+}
