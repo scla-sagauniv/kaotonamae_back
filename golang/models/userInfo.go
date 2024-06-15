@@ -85,7 +85,7 @@ func PutUserInfo(lateUserInfo *UserInfo) (*UserInfo, error) {
 	existingUserInfo.UserLastName = lateUserInfo.UserLastName
 	existingUserInfo.UserFirstName = lateUserInfo.UserFirstName
 	existingUserInfo.LastNameFurigana = lateUserInfo.LastNameFurigana
-	existingUserInfo.FirstNameFurigana = lateUserInfo.UserFirstName
+	existingUserInfo.FirstNameFurigana = lateUserInfo.FirstNameFurigana
 	existingUserInfo.Nickname = lateUserInfo.Nickname
 	existingUserInfo.Gender = lateUserInfo.Gender
 	existingUserInfo.Photo = lateUserInfo.Photo
