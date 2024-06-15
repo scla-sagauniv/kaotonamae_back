@@ -10,6 +10,7 @@ type quiz struct {
 	QuizQuestion string            `json:"quizQuestion"`
 	QuizAnswer   string            `json:"quizAnswer"`
 	QuizHint     map[string]string `json:"quizHint"`
+	UserPhoto    string            `json:"userPhoto"`
 }
 
 func CreateQuizzesRess(GroupId string) ([]quiz, error) {
@@ -97,6 +98,7 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 			QuizQuestion: quizQuestion,
 			QuizAnswer:   quizAnswer,
 			QuizHint:     quizHint,
+			UserPhoto:    userInfo.Photo,
 		}
 		quizzes = append(quizzes, newQuiz)
 		createdQuizzes[quizQuestion+quizAnswer] = true
