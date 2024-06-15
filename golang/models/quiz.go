@@ -7,9 +7,9 @@ import (
 )
 
 type quiz struct {
-	QuizQuestion string   `json:"quizQuestion"`
-	QuizAnswer   string   `json:"quizAnswer"`
-	QuizHint     []string `json:"quizHint"`
+	QuizQuestion string            `json:"quizQuestion"`
+	QuizAnswer   string            `json:"quizAnswer"`
+	QuizHint     map[string]string `json:"quizHint"`
 }
 
 func CreateQuizzesRess(GroupId string) ([]quiz, error) {
@@ -38,29 +38,27 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 
 		// クイズ候補となるフィールドを集める
 		userInfoFields := map[string]string{
-			"UserLastName":      userInfo.UserLastName,
-			"UserFirstName":     userInfo.UserFirstName,
-			"LastNameFurigana":  userInfo.LastNameFurigana,
-			"FirstNameFurigana": userInfo.FirstNameFurigana,
-			"Nickname":          userInfo.Nickname,
-			"Gender":            userInfo.Gender,
-			"Birthday":          userInfo.Birthday,
-			"Age":               userInfo.Age,
-			"Hobbys":            userInfo.Hobbys,
-			"Organization":      userInfo.Organization,
-			"FavoriteColor":     userInfo.FavoriteColor,
-			"FavoriteAnimal":    userInfo.FavoriteAnimal,
-			"FavoritePlace":     userInfo.FavoritePlace,
-			"HolidayActivity":   userInfo.HolidayActivity,
-			"Weaknesses":        userInfo.Weaknesses,
-			"Language":          userInfo.Language,
+			"UserName":        userInfo.UserLastName + " " + userInfo.UserFirstName,
+			"Furigana":        userInfo.LastNameFurigana + " " + userInfo.FirstNameFurigana,
+			"Nickname":        userInfo.Nickname,
+			"Gender":          userInfo.Gender,
+			"Birthday":        userInfo.Birthday,
+			"Age":             userInfo.Age,
+			"Hobbys":          userInfo.Hobbys,
+			"Organization":    userInfo.Organization,
+			"FavoriteColor":   userInfo.FavoriteColor,
+			"FavoriteAnimal":  userInfo.FavoriteAnimal,
+			"FavoritePlace":   userInfo.FavoritePlace,
+			"HolidayActivity": userInfo.HolidayActivity,
+			"Weaknesses":      userInfo.Weaknesses,
+			"Language":        userInfo.Language,
 		}
 
 		// ""でないフィールドを集める
-		validFields := make(map[string]string)
+		var validFields []string
 		for field, value := range userInfoFields {
 			if value != "" {
-				validFields[field] = value
+				validFields = append(validFields, field)
 			}
 		}
 
@@ -69,13 +67,9 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 		}
 
 		// クイズの質問と回答をランダムに選ぶ
-		var quizQuestion string
-		var quizAnswer string
-		for question, answer := range validFields {
-			quizQuestion = question
-			quizAnswer = answer
-			break
-		}
+		quizField := validFields[rand.Intn(len(validFields))]
+		quizQuestion := quizField
+		quizAnswer := userInfoFields[quizField]
 
 		// 既に生成されたクイズかどうかを確認
 		if _, exists := createdQuizzes[quizQuestion+quizAnswer]; exists {
@@ -83,10 +77,10 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 		}
 
 		// ヒントを集める
-		var hints []string
-		for question, answer := range validFields {
-			if question != quizQuestion && len(hints) < 3 {
-				hints = append(hints, answer)
+		quizHint := make(map[string]string)
+		for _, field := range validFields {
+			if field != quizField && len(quizHint) < 3 {
+				quizHint[field] = userInfoFields[field]
 			}
 		}
 
@@ -94,7 +88,7 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 		newQuiz := quiz{
 			QuizQuestion: quizQuestion,
 			QuizAnswer:   quizAnswer,
-			QuizHint:     hints,
+			QuizHint:     quizHint,
 		}
 		quizzes = append(quizzes, newQuiz)
 		createdQuizzes[quizQuestion+quizAnswer] = true
