@@ -87,10 +87,10 @@ func PostNewGroup(id string) (*Group, error) {
 	return &newGroup, nil
 }
 
+// 新規追加の際にグループネームが重複しないようにする
 func findNextAvailableGroupName(userId string) (string, error) {
 	var existingNames []string
 
-	// Query existing group names for the given userId
 	err := db.DB.Model(&Group{}).
 		Where("user_id = ?", userId).
 		Pluck("group_name", &existingNames).Error
@@ -98,7 +98,6 @@ func findNextAvailableGroupName(userId string) (string, error) {
 		return "", err
 	}
 
-	// Find the next available number
 	nextNumber := 1
 	for {
 		nextGroupName := "New Group #" + strconv.Itoa(nextNumber)
