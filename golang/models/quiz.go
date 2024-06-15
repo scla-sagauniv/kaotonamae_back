@@ -25,13 +25,22 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 	rand.Seed(time.Now().UnixNano())
 
 	createdQuizzes := map[string]bool{}
+	usedMembers := map[string]bool{}
 
 	for len(quizzes) < 5 {
+		var randomMember GroupMember
+		var userInfo *UserInfo
+
 		// グループメンバーからランダムに1人を選ぶ
-		randomMember := groupMembers[rand.Intn(len(groupMembers))]
+		for {
+			randomMember = groupMembers[rand.Intn(len(groupMembers))]
+			if !usedMembers[randomMember.UserId] {
+				break
+			}
+		}
 
 		// 選ばれたメンバーのユーザー情報を取得
-		userInfo, err := GetUserInfoById(randomMember.UserId)
+		userInfo, err = GetUserInfoById(randomMember.UserId)
 		if err != nil || userInfo == nil {
 			continue
 		}
@@ -66,10 +75,9 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 			continue
 		}
 
-		// クイズの質問と回答をランダムに選ぶ
-		quizField := validFields[rand.Intn(len(validFields))]
-		quizQuestion := quizField
-		quizAnswer := userInfoFields[quizField]
+		// 名前を問題にする
+		quizQuestion := "UserName"
+		quizAnswer := userInfoFields[quizQuestion]
 
 		// 既に生成されたクイズかどうかを確認
 		if _, exists := createdQuizzes[quizQuestion+quizAnswer]; exists {
@@ -79,7 +87,7 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 		// ヒントを集める
 		quizHint := make(map[string]string)
 		for _, field := range validFields {
-			if field != quizField && len(quizHint) < 3 {
+			if field != quizQuestion && len(quizHint) < 3 {
 				quizHint[field] = userInfoFields[field]
 			}
 		}
@@ -92,6 +100,61 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 		}
 		quizzes = append(quizzes, newQuiz)
 		createdQuizzes[quizQuestion+quizAnswer] = true
+		usedMembers[randomMember.UserId] = true
+
+		// 次のクイズ
+		for len(quizzes) < 5 {
+			// 未使用のフィールドを集める
+			var remainingFields []string
+			for _, field := range validFields {
+				if field != "UserName" && !createdQuizzes[field+userInfoFields[field]] {
+					remainingFields = append(remainingFields, field)
+				}
+			}
+
+			// そのメンバーの他の要素か、別のメンバーの名前を選ぶ
+			if len(remainingFields) > 0 && rand.Float32() < 0.5 {
+				quizField := remainingFields[rand.Intn(len(remainingFields))]
+				quizQuestion = quizField
+				quizAnswer = userInfoFields[quizField]
+			} else {
+				for {
+					randomMember = groupMembers[rand.Intn(len(groupMembers))]
+					if !usedMembers[randomMember.UserId] {
+						break
+					}
+				}
+				userInfo, err = GetUserInfoById(randomMember.UserId)
+				if err != nil || userInfo == nil {
+					continue
+				}
+				quizQuestion = "UserName"
+				quizAnswer = userInfo.UserLastName + " " + userInfo.UserFirstName
+			}
+
+			// 既に生成されたクイズかどうかを確認
+			if _, exists := createdQuizzes[quizQuestion+quizAnswer]; exists {
+				continue
+			}
+
+			// ヒントを集める
+			quizHint = make(map[string]string)
+			for _, field := range validFields {
+				if field != quizQuestion && len(quizHint) < 3 {
+					quizHint[field] = userInfoFields[field]
+				}
+			}
+
+			// クイズを作成してリストに追加
+			newQuiz = quiz{
+				QuizQuestion: quizQuestion,
+				QuizAnswer:   quizAnswer,
+				QuizHint:     quizHint,
+			}
+			quizzes = append(quizzes, newQuiz)
+			createdQuizzes[quizQuestion+quizAnswer] = true
+			usedMembers[randomMember.UserId] = true
+		}
 	}
 
 	return quizzes, nil
