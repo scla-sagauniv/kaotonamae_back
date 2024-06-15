@@ -24,3 +24,12 @@ func getUserInfoById(context echo.Context) error {
 	}
 	return context.JSON(http.StatusOK, userInfo)
 }
+
+func postCreateUserInfo(context echo.Context) error {
+	userId := context.Param("userId")
+	userInfo, err := models.PostCreateUserInfo(userId)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, "ユーザー情報を追加できませんでした。")
+	}
+	return context.JSON(http.StatusOK, userInfo)
+}
