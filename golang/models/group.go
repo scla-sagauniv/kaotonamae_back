@@ -14,7 +14,7 @@ import (
 
 type Group struct {
 	UserId       string        `json:"userId" gorm:"column:user_id;primaryKey;type:VARCHAR(255)"`
-	GroupId      string        `json:"groupId" gorm:"column:group_id;primaryKey;type:VARCHAR(255)"`
+	GroupId      string        `json:"groupId" gorm:"column:group_id;primaryKey;type:VARCHAR(255);index"`
 	GroupName    string        `json:"groupName" gorm:"column:group_name;type:VARCHAR(255)"`
 	Overview     string        `json:"overview" gorm:"column:overview;type:VARCHAR(255)"`
 	GroupMembers []GroupMember `gorm:"foreignKey:GroupId;references:GroupId"`
