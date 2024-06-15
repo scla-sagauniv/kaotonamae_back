@@ -23,4 +23,6 @@ func RegisterRoutes(server *echo.Echo) {
 
 	server.GET("/friends", getAllFriends)
 	server.GET("/friends/:userId", getFriendsById)
+	server.POST("friendAdd/:myUserId/:friendUserId", postFriendAdd)
+	server.DELETE("friendDelete/:myUserId/:friendUserId", deleteFriendDelete)
 }

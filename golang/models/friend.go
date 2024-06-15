@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"kaotonamae_back/db"
 	"time"
 
@@ -34,4 +35,41 @@ func GetFriendsById(id string) ([]Friend, error) {
 	}
 
 	return friends, nil
+}
+
+// フレンドの登録をする
+func PostFriendAdd(myUserId, friendUserId string) (*Friend, error) {
+	// friendInfo, err := GetUserInfoById(friendUserId)
+	// if err != nil {
+	// 	return nil, errors.New("フレンド情報の取得にエラーが発生しました")
+	// }
+
+	newFrined := Friend{
+		UserId:     myUserId,
+		FriendId:   friendUserId,
+		FriendName: "",
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+
+	if err := db.DB.Create(&newFrined).Error; err != nil {
+		return nil, errors.New("フレンドの登録中にエラーが発生しました")
+	}
+
+	return &newFrined, nil
+}
+
+// フレンドの削除をする
+func DeleteFrinedDelete(myUserId, friendUserId string) error {
+	var friend Friend
+	if err := db.DB.Where("user_id = ? AND friend_id = ?", myUserId, friendUserId).First(&friend).Error; err != nil {
+		return errors.New("該当のフレンドが見つかりません")
+	}
+
+	// 削除
+	if err := db.DB.Delete(&friend).Error; err != nil {
+		return errors.New("該当のフレンドの削除中にエラーが発生しました")
+	}
+
+	return nil
 }

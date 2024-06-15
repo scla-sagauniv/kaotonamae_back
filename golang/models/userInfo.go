@@ -23,7 +23,7 @@ type UserInfo struct {
 	CreatedAt       time.Time `json:"createdAt" gorm:"column:created_at"`
 }
 
-// 全ユーザー取得処理
+// 全ユーザー情報取得処理
 func GetAllUserInfos() ([]UserInfo, error) {
 	userInfos := []UserInfo{}
 	if db.DB.Find(&userInfos).Error != nil {
@@ -32,7 +32,7 @@ func GetAllUserInfos() ([]UserInfo, error) {
 	return userInfos, nil
 }
 
-// ユーザー取得処理(id)
+// ユーザー情報取得処理(id)
 func GetUserInfoById(id string) (*UserInfo, error) {
 	userInfo := UserInfo{}
 	if db.DB.Where("user_id = ?", id).First(&userInfo).Error != nil {
