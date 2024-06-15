@@ -28,16 +28,22 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 	createdQuizzes := map[string]bool{}
 	usedMembers := map[string]bool{}
 
-	for len(quizzes) < 5 {
+	for len(quizzes) < 15 {
 		var randomMember GroupMember
 		var userInfo *UserInfo
 
 		// グループメンバーからランダムに1人を選ぶ
+		attempts := 0
 		for {
+			if attempts >= len(groupMembers) {
+				// すべてのメンバーがusedMembersの場合
+				return quizzes, nil
+			}
 			randomMember = groupMembers[rand.Intn(len(groupMembers))]
 			if !usedMembers[randomMember.UserId] {
 				break
 			}
+			attempts++
 		}
 
 		// 選ばれたメンバーのユーザー情報を取得
@@ -105,7 +111,7 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 		usedMembers[randomMember.UserId] = true
 
 		// 名前以外のクイズ
-		for len(quizzes) < 5 {
+		for len(quizzes) < 15 {
 			// 未使用のフィールドを集める
 			var remainingFields []string
 			for _, field := range validFields {
