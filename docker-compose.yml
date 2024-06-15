@@ -1,12 +1,43 @@
 version: '3'
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  go:
+    container_name: kaotonamae_back
+    restart: always
+    build: ./golang
+    tty: true
     volumes:
-      - .:/app
+      - ./golang:/app
     working_dir: /app
-    command: go run main.go
+    command: air
     ports:
       - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - kaotonamae_net
+
+  db:
+    container_name: kaotonamae_db
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3312:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    command: ["--default-time-zone=+00:00"]
+    volumes:
+      - type: volume
+        source: mysql_data
+        target: /var/lib/mysql
+    networks:
+      - kaotonamae_net
+
+networks:
+  kaotonamae_net:
+volumes:
+  mysql_data:
