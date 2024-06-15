@@ -31,4 +31,6 @@ func RegisterRoutes(server *echo.Echo) {
 	server.GET("/userInfo/:userId", getUserInfoById)
 	server.POST("/createUserInfo/:userId", postCreateUserInfo)
 	server.PUT("/userInfo", putUserInfo)
+
+	server.GET("/quiz/:groupId", getQuiz)
 }

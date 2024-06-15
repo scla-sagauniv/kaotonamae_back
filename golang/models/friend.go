@@ -44,7 +44,7 @@ func PostFriendAdd(myUserId, friendUserId string) (*Friend, error) {
 		return nil, errors.New("フレンド情報の取得にエラーが発生しました")
 	}
 
-	friendFullName := friendInfo.UserLastName + "　" + friendInfo.UserFirstName
+	friendFullName := friendInfo.UserLastName + " " + friendInfo.UserFirstName
 
 	newFrined := Friend{
 		UserId:     myUserId,

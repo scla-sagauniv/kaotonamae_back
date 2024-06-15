@@ -97,6 +97,7 @@ func PutUserInfo(lateUserInfo *UserInfo) (*UserInfo, error) {
 	existingUserInfo.FavoritePlace = lateUserInfo.FavoritePlace
 	existingUserInfo.HolidayActivity = lateUserInfo.HolidayActivity
 	existingUserInfo.Weaknesses = lateUserInfo.Weaknesses
+	existingUserInfo.Language = lateUserInfo.Language
 
 	existingUserInfo.UpdatedAt = lateUserInfo.UpdatedAt
 
