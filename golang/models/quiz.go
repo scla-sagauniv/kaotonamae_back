@@ -104,7 +104,7 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 		createdQuizzes[quizQuestion+quizAnswer] = true
 		usedMembers[randomMember.UserId] = true
 
-		// 次のクイズ
+		// 名前以外のクイズ
 		for len(quizzes) < 5 {
 			// 未使用のフィールドを集める
 			var remainingFields []string
@@ -114,8 +114,12 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 				}
 			}
 
+			if len(remainingFields) == 0 {
+				break
+			}
+
 			// そのメンバーの他の要素か、別のメンバーの名前を選ぶ
-			if len(remainingFields) > 0 && rand.Float32() < 0.5 {
+			if rand.Float32() < 0.5 {
 				quizField := remainingFields[rand.Intn(len(remainingFields))]
 				quizQuestion = quizField
 				quizAnswer = userInfoFields[quizField]
@@ -152,10 +156,15 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 				QuizQuestion: quizQuestion,
 				QuizAnswer:   quizAnswer,
 				QuizHint:     quizHint,
+				UserPhoto:    userInfo.Photo,
 			}
 			quizzes = append(quizzes, newQuiz)
 			createdQuizzes[quizQuestion+quizAnswer] = true
-			usedMembers[randomMember.UserId] = true
+
+			// 1/2の確率でループを抜ける
+			if rand.Float32() < 0.5 {
+				break
+			}
 		}
 	}
 
