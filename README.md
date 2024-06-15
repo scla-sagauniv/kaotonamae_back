@@ -41,3 +41,10 @@ DB_ROOT_PASSWORD=rootpassword
   ```
   docker compose build --no-cache
   ```
+
+### 注意書き
+   `docker compose up`で立ち上げると、  
+   dbより先にechoが立ち上がって接続がうまくいかないときがある  
+
+   そういう時は  `docker compose up -d db`で  
+   データベースをバックグラウンドで動かしてから`docker compose up`するとよい
