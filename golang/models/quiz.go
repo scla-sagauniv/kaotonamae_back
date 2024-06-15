@@ -118,25 +118,9 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 				break
 			}
 
-			// そのメンバーの他の要素か、別のメンバーの名前を選ぶ
-			if rand.Float32() < 0.5 {
-				quizField := remainingFields[rand.Intn(len(remainingFields))]
-				quizQuestion = quizField
-				quizAnswer = userInfoFields[quizField]
-			} else {
-				for {
-					randomMember = groupMembers[rand.Intn(len(groupMembers))]
-					if !usedMembers[randomMember.UserId] {
-						break
-					}
-				}
-				userInfo, err = GetUserInfoById(randomMember.UserId)
-				if err != nil || userInfo == nil {
-					continue
-				}
-				quizQuestion = "UserName"
-				quizAnswer = userInfo.UserLastName + " " + userInfo.UserFirstName
-			}
+			quizField := remainingFields[rand.Intn(len(remainingFields))]
+			quizQuestion = quizField
+			quizAnswer = userInfoFields[quizField]
 
 			// 既に生成されたクイズかどうかを確認
 			if _, exists := createdQuizzes[quizQuestion+quizAnswer]; exists {
@@ -161,8 +145,8 @@ func CreateQuizzesRess(GroupId string) ([]quiz, error) {
 			quizzes = append(quizzes, newQuiz)
 			createdQuizzes[quizQuestion+quizAnswer] = true
 
-			// 1/2の確率でループを抜ける
-			if rand.Float32() < 0.5 {
+			// 3/10の確率でループを抜ける
+			if rand.Float32() < 0.3 {
 				break
 			}
 		}
