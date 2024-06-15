@@ -39,15 +39,17 @@ func GetFriendsById(id string) ([]Friend, error) {
 
 // フレンドの登録をする
 func PostFriendAdd(myUserId, friendUserId string) (*Friend, error) {
-	// friendInfo, err := GetUserInfoById(friendUserId)
-	// if err != nil {
-	// 	return nil, errors.New("フレンド情報の取得にエラーが発生しました")
-	// }
+	friendInfo, err := GetUserInfoById(friendUserId)
+	if err != nil {
+		return nil, errors.New("フレンド情報の取得にエラーが発生しました")
+	}
+
+	friendFullName := friendInfo.UserLastName + "　" + friendInfo.UserFirstName
 
 	newFrined := Friend{
 		UserId:     myUserId,
 		FriendId:   friendUserId,
-		FriendName: "",
+		FriendName: friendFullName,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	}
