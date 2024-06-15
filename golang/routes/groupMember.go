@@ -25,6 +25,15 @@ func getMembersByGroupId(context echo.Context) error {
 	return context.JSON(http.StatusOK, groupListElements)
 }
 
+func getGroupsByGroupId(context echo.Context) error {
+	groupId := context.Param("groupId")
+	group, err := models.GetGroupByGroupId(groupId)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, "グループメンバーを取得できませんでした。")
+	}
+	return context.JSON(http.StatusOK, group)
+}
+
 func postGroupMemberAdd(context echo.Context) error {
 	userId := context.Param("userId")
 	groupId := context.Param("groupId")

@@ -58,6 +58,15 @@ func GetGroupByUserId(id string) ([]GroupListElement, error) {
 	return groupListElements, nil
 }
 
+// グループ情報取得処理(id)
+func GetGroupByGroupId(id string) (*Group, error) {
+	group := Group{}
+	if db.DB.Where("group_id = ?", id).First(&group).Error != nil {
+		return nil, echo.ErrNotFound
+	}
+	return &group, nil
+}
+
 // 新規グループ追加処理
 func PostNewGroup(id string) (*Group, error) {
 	uuid, err := uuid.NewRandom()
