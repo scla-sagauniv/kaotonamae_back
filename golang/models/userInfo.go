@@ -64,6 +64,42 @@ func PostCreateUserInfo(id string) (*UserInfo, error) {
 	return &userInfo, nil
 }
 
+// グループ情報の更新
+func PutUserInfo(lateUserInfo *UserInfo) (*UserInfo, error) {
+	// 現在のタイムスタンプを更新日時に設定
+	lateUserInfo.UpdatedAt = time.Now()
+
+	// データベースで該当のレコードを検索
+	var existingUserInfo UserInfo
+	if err := db.DB.Where("user_id = ?", lateUserInfo.UserId).First(&existingUserInfo).Error; err != nil {
+		if err == echo.ErrNotFound {
+			return nil, errors.New("ユーザーが見つかりません")
+		}
+		return nil, err
+	}
+
+	// 更新対象のフィールドを上書き
+	existingUserInfo.UserName = lateUserInfo.UserName
+	existingUserInfo.Furigana = lateUserInfo.Furigana
+	existingUserInfo.Nickname = lateUserInfo.Furigana
+	existingUserInfo.Gender = lateUserInfo.Gender
+	existingUserInfo.Photo = lateUserInfo.Photo
+	existingUserInfo.Birthday = lateUserInfo.Birthday
+	existingUserInfo.Hobbys = lateUserInfo.Hobbys
+	existingUserInfo.Organization = lateUserInfo.Organization
+	existingUserInfo.HolidayActivity = lateUserInfo.HolidayActivity
+	existingUserInfo.Weaknesses = lateUserInfo.Weaknesses
+
+	existingUserInfo.UpdatedAt = lateUserInfo.UpdatedAt
+
+	// データベースのレコードを更新
+	if err := db.DB.Save(&existingUserInfo).Error; err != nil {
+		return nil, errors.New("ユーザー更新中にエラーが発生しました")
+	}
+
+	return &existingUserInfo, nil
+}
+
 // 新規ユーザー追加の際にユーザーネームが重複しないようにする
 func findNextAvailableUserName(userId string) (string, error) {
 	var existingNames []string
