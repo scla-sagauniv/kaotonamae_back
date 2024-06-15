@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"kaotonamae_back/db"
-	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -52,15 +51,11 @@ func GetUserInfoById(id string) (*UserInfo, error) {
 
 // ユーザー追加処理
 func PostCreateUserInfo(id string) (*UserInfo, error) {
-	nextUserName, err := findNextAvailableUserName(id)
-	if err != nil {
-		return nil, err
-	}
 	// Create new use
 	userInfo := UserInfo{
 		UserId:        id,
-		UserLastName:  nextUserName,
-		UserFirstName: nextUserName,
+		UserLastName:  "User Last Name",
+		UserFirstName: "User First Name",
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}
@@ -111,32 +106,4 @@ func PutUserInfo(lateUserInfo *UserInfo) (*UserInfo, error) {
 	}
 
 	return &existingUserInfo, nil
-}
-
-// 新規ユーザー追加の際にユーザーネームが重複しないようにする
-func findNextAvailableUserName(userId string) (string, error) {
-	var existingNames []string
-
-	err := db.DB.Model(&UserInfo{}).
-		Where("user_id = ?", userId).
-		Pluck("user_name", &existingNames).Error
-	if err != nil {
-		return "", err
-	}
-
-	nextNumber := 1
-	for {
-		nextGroupName := "New User #" + strconv.Itoa(nextNumber)
-		found := false
-		for _, name := range existingNames {
-			if name == nextGroupName {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return nextGroupName, nil
-		}
-		nextNumber++
-	}
 }
