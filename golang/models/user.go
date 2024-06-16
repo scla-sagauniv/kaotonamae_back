@@ -44,5 +44,10 @@ func PostCreateUser(id string) (*User, error) {
 		return nil, errors.New("ユーザー作成中にエラーが発生しました")
 	}
 
+	_, err := PostCreateUserInfo(id)
+	if err != nil {
+		return nil, err
+	}
+
 	return &user, nil
 }
