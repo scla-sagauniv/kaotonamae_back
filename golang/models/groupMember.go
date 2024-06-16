@@ -9,11 +9,12 @@ import (
 )
 
 type GroupMember struct {
-	GroupId    string    `json:"groupId" gorm:"column:group_id;primaryKey;type:VARCHAR(255)"`
-	UserId     string    `json:"userId" gorm:"column:user_id;primaryKey;type:VARCHAR(255)"` // 所属メンバーのユーザーID
-	MemberName string    `json:"memberName" gorm:"column:member_name;type:VARCHAR(255)"`
-	UpdatedAt  time.Time `json:"updatedAt" gorm:"column:updated_at"`
-	CreatedAt  time.Time `json:"createdAt" gorm:"column:created_at"`
+	GroupId     string    `json:"groupId" gorm:"column:group_id;primaryKey;type:VARCHAR(255)"`
+	UserId      string    `json:"userId" gorm:"column:user_id;primaryKey;type:VARCHAR(255)"` // 所属メンバーのユーザーID
+	MemberName  string    `json:"memberName" gorm:"column:member_name;type:VARCHAR(255)"`
+	MemberPhoto string    `json:"memberPhoto" gorm:"column:member_photo;type:VARCHAR(255)"`
+	UpdatedAt   time.Time `json:"updatedAt" gorm:"column:updated_at"`
+	CreatedAt   time.Time `json:"createdAt" gorm:"column:created_at"`
 }
 
 // 全グループメンバー取得処理
@@ -46,11 +47,12 @@ func PostGroupMemberAdd(userId, groupId string) (*GroupMember, error) {
 	memberFullName := memberInfo.UserLastName + " " + memberInfo.UserFirstName
 
 	newGroupMember := GroupMember{
-		GroupId:    groupId,
-		UserId:     userId,
-		MemberName: memberFullName,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
+		GroupId:     groupId,
+		UserId:      userId,
+		MemberName:  memberFullName,
+		MemberPhoto: memberInfo.Photo,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 
 	if err := db.DB.Create(&newGroupMember).Error; err != nil {
